@@ -55,7 +55,7 @@ test -f mcp-server/node_modules/axios/package.json
 
 **方式 1：临时环境变量**
 ```bash
-export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3001/api"
+export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3000/api"
 export ANYTHINGLLM_API_KEY="your-api-key-here"
 ```
 
@@ -69,7 +69,7 @@ nano .env
 **方式 3：Shell 配置文件**
 ```bash
 # 添加到 ~/.bashrc 或 ~/.zshrc
-export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3001/api"
+export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3000/api"
 export ANYTHINGLLM_API_KEY="your-api-key-here"
 ```
 
@@ -158,7 +158,7 @@ echo $ANYTHINGLLM_BASE_URL
 echo $ANYTHINGLLM_API_KEY
 
 # 如果为空，重新设置
-export ANYTHINGLLM_BASE_URL="http://your-server:3001/api"
+export ANYTHINGLLM_BASE_URL="http://your-server:3000/api"
 export ANYTHINGLLM_API_KEY="your-key"
 ```
 
