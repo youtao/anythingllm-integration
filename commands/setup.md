@@ -14,9 +14,15 @@ description: 安装 AnythingLLM 插件依赖并配置环境
 
 **检测插件安装位置**：
 
-如果通过插件市场安装，插件位于：
+如果通过插件市场安装，插件位于（版本号会动态变化）：
+```
+/home/youtao/.claude/plugins/cache/youtao-claude-plugin-marketplace/anythingllm-integration/*/mcp-server/
+```
+
+实际路径示例：
 ```
 /home/youtao/.claude/plugins/cache/youtao-claude-plugin-marketplace/anythingllm-integration/1.0.0/
+/home/youtao/.claude/plugins/cache/youtao-claude-plugin-marketplace/anythingllm-integration/1.1.0/
 ```
 
 如果从源码开发，插件位于：
