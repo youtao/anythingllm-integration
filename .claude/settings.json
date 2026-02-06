@@ -1,8 +1,0 @@
-{
-  "enabledPlugins": {
-    "anythingllm-integration": true
-  },
-  "pluginPaths": [
-    "/home/youtao/projects/anythingllm-integration"
-  ]
-}
