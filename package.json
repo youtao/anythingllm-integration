@@ -1,0 +1,27 @@
+{
+  "name": "anythingllm-integration",
+  "version": "1.0.0",
+  "description": "AnythingLLM 知识库集成 - Claude Code Plugin",
+  "type": "module",
+  "main": "mcp-server/index.js",
+  "scripts": {
+    "test": "node mcp-server/index.js"
+  },
+  "keywords": [
+    "anythingllm",
+    "knowledge-base",
+    "rag",
+    "vector-database",
+    "mcp",
+    "claude-code"
+  ],
+  "author": "Youdao",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.13.4",
+    "cheerio": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

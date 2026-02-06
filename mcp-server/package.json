@@ -1,0 +1,18 @@
+{
+  "name": "anythingllm-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for AnythingLLM integration",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["mcp", "anythingllm", "rag", "knowledge-base"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "axios": "^1.13.4"
+  }
+}

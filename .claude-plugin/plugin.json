@@ -1,0 +1,24 @@
+{
+  "name": "anythingllm-integration",
+  "version": "1.0.0",
+  "description": "AnythingLLM 知识库集成 - 自动查询和同步系统",
+  "author": {
+    "name": "youtao",
+    "email": "youtao@foxmail.com"
+  },
+  "repository": "https://github.com/youtao/anythingllm-integration",
+  "homepage": "https://github.com/youtao/anythingllm-integration#readme",
+  "license": "MIT",
+  "keywords": [
+    "anythingllm",
+    "knowledge-base",
+    "rag",
+    "vector-database",
+    "sync",
+    "mcp",
+    "hooks"
+  ],
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+  "commands": "./commands/"
+}
