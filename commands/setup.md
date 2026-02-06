@@ -12,15 +12,23 @@ description: 安装 AnythingLLM 插件依赖并配置环境
 
 ### 步骤 1: 安装 npm 依赖
 
-自动安装项目根目录和 MCP 服务器的所有依赖：
+安装项目根目录和 MCP 服务器的依赖：
 
 ```bash
+# 安装 MCP 服务器依赖（必需）
+cd mcp-server && npm install && cd ..
+
+# 项目根目录依赖（可选，当前未使用）
 npm install
 ```
 
 **预期输出**：
 ```
-added 102 packages in 7s
+mcp-server/:
+added 30 packages in 3s
+
+项目根目录:
+added 46 packages in 1s
 ```
 
 ### 步骤 2: 检查安装
