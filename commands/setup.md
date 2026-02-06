@@ -12,23 +12,42 @@ description: 安装 AnythingLLM 插件依赖并配置环境
 
 ### 步骤 1: 安装 npm 依赖
 
-安装项目根目录和 MCP 服务器的依赖：
+**检测插件安装位置**：
+
+如果通过插件市场安装，插件位于：
+```
+/home/youtao/.claude/plugins/cache/youtao-claude-plugin-marketplace/anythingllm-integration/1.0.0/
+```
+
+如果从源码开发，插件位于：
+```
+/home/youtao/projects/anythingllm-integration/
+```
+
+**自动安装依赖**：
 
 ```bash
-# 安装 MCP 服务器依赖（必需）
-cd mcp-server && npm install && cd ..
+# 检测插件根目录并安装依赖
+if [ -n "$CLAUDE_PLUGIN_ROOT" ]; then
+  echo "📦 插件市场安装模式"
+  cd "$CLAUDE_PLUGIN_ROOT/mcp-server" && npm install
+else
+  echo "🔧 源码开发模式"
+  cd mcp-server && npm install && cd ..
+  npm install
+fi
+```
 
-# 项目根目录依赖（可选，当前未使用）
-npm install
+**一键安装**（推荐）：
+```bash
+# 自动检测安装位置
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+cd "$PLUGIN_ROOT/mcp-server" && npm install
 ```
 
 **预期输出**：
 ```
-mcp-server/:
 added 30 packages in 3s
-
-项目根目录:
-added 46 packages in 1s
 ```
 
 ### 步骤 2: 检查安装
@@ -36,11 +55,17 @@ added 46 packages in 1s
 验证所有依赖是否正确安装：
 
 ```bash
+# 检测插件根目录
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+
 # 检查 MCP SDK
-test -f mcp-server/node_modules/@modelcontextprotocol/sdk/package.json
+test -f "$PLUGIN_ROOT/mcp-server/node_modules/@modelcontextprotocol/sdk/package.json"
 
 # 检查 axios
-test -f mcp-server/node_modules/axios/package.json
+test -f "$PLUGIN_ROOT/mcp-server/node_modules/axios/package.json"
+
+echo "✅ 依赖安装完成！"
+echo "📂 插件位置: $PLUGIN_ROOT"
 ```
 
 ### 步骤 3: 配置环境变量
@@ -78,8 +103,10 @@ export ANYTHINGLLM_API_KEY="your-api-key-here"
 测试 MCP 服务器是否能正常运行：
 
 ```bash
-node mcp-server/index.js &
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node mcp-server/index.js
+# 使用插件根目录
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+node "$PLUGIN_ROOT/mcp-server/index.js" &
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node "$PLUGIN_ROOT/mcp-server/index.js"
 ```
 
 **预期输出**：
@@ -140,11 +167,16 @@ npm install --registry=https://registry.npmmirror.com
 
 **症状**：`Cannot find module '@modelcontextprotocol/sdk'`
 
+**原因**：在错误的目录安装了依赖
+
 **解决方案**：
 ```bash
-cd mcp-server
-npm install
-cd ..
+# 确认插件安装位置
+echo "插件根目录: ${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+
+# 在正确的位置安装依赖
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+cd "$PLUGIN_ROOT/mcp-server" && npm install
 ```
 
 ### 问题 3：环境变量未生效

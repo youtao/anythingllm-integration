@@ -61,12 +61,14 @@ AI 将询问您想要同步什么
 
 3. **执行同步**
    - 整理内容为 Markdown 格式
-   - 保存到 `knowledge/<主题>/` 目录
+   - **保存到 `knowledge/<主题>/` 目录（必须按主题分文件夹）**
    - 上传到 AnythingLLM 知识库
+   - **使用主题作为文件夹名称分组**
 
 4. **返回结果**
    - 显示文件保存位置
    - 确认上传状态
+   - 显示所属主题文件夹
 
 ## 参数说明
 
@@ -92,8 +94,9 @@ AI 将询问您想要同步什么
 AI 执行流程：
 1. 搜索 "PostgreSQL 18 性能优化 最新 特性 2025"
 2. 整理为结构化 Markdown
-3. 保存到 `knowledge/postgresql-18-performance/2026-02-06-优化.md`
-4. 上传到 AnythingLLM
+3. **创建主题文件夹** `knowledge/postgresql-18-performance/`
+4. 保存到 `knowledge/postgresql-18-performance/2026-02-06-优化.md`
+5. 上传到 AnythingLLM（按文件夹分组）
 
 ### 示例 2：上传本地文件
 
@@ -104,8 +107,9 @@ AI 执行流程：
 AI 执行流程：
 1. 读取 `~/docs/vue3-guide.md`
 2. 提取标题和内容
-3. 保存到 `knowledge/vue-guide/vue3-guide.md`
-4. 上传到 AnythingLLM
+3. **创建主题文件夹** `knowledge/vue-guide/`
+4. 保存到 `knowledge/vue-guide/vue3-guide.md`
+5. 上传到 AnythingLLM（按文件夹分组）
 
 ### 示例 3：抓取 URL
 
@@ -116,8 +120,9 @@ AI 执行流程：
 AI 执行流程：
 1. 抓取网页内容
 2. 转换为 Markdown 格式
-3. 保存到 `knowledge/react-19/react-19-blog.md`
-4. 上传到 AnythingLLM
+3. **创建主题文件夹** `knowledge/react-19/`
+4. 保存到 `knowledge/react-19/react-19-blog.md`
+5. 上传到 AnythingLLM（按文件夹分组）
 
 ### 示例 4：交互模式
 
@@ -145,23 +150,37 @@ AI 会自动判断您的意图：
 | `主题 https://...` | URL 抓取 | 抓取网页内容 |
 |（无参数）| 交互模式 | 询问用户意图 |
 
-## 文件组织
+## 文件组织（必须按文件夹分组）
+
+⚠️ **重要**：所有文档必须按主题文件夹组织，不要直接放在 knowledge 根目录！
 
 同步的内容会自动保存到：
 
 ```
 knowledge/
-├── postgresql-18/
-│   └── 2026-02-06-features.md
-├── vue-3.5/
-│   └── 2026-02-06-guide.md
-└── react-19/
-    └── 2026-02-06-blog.md
+├── postgresql-18/              # 主题文件夹
+│   ├── 2026-02-06-features.md
+│   ├── 2026-02-06-performance.md
+│   └── 2026-02-06-security.md
+├── vue-3.5/                    # 主题文件夹
+│   ├── 2026-02-06-guide.md
+│   └── 2026-02-06-api.md
+└── react-19/                   # 主题文件夹
+    ├── 2026-02-06-blog.md
+    └── 2026-02-06-changes.md
 ```
 
-- 按主题分目录组织
-- 文件名包含日期和标题
-- 相同标题的文件会自动更新
+**组织规则**：
+- ✅ **必须**：按主题创建子文件夹
+- ✅ **必须**：使用主题作为文件夹名称
+- ✅ 文件名包含日期和标题
+- ✅ 相同主题的文档放在同一文件夹
+- ❌ **禁止**：直接在 knowledge 根目录创建文件
+
+**为什么需要分组？**
+- 便于查询时限定范围（只搜索特定主题）
+- AnythingLLM 会按文件夹建立索引
+- 避免不同主题的文档混在一起
 
 ## 注意事项
 
@@ -181,9 +200,10 @@ knowledge/
 - 动态加载内容可能无法抓取
 
 ### 通用规则
+- ✅ **必须按主题文件夹组织**：不要直接放在 knowledge 根目录
 - 确保已配置 AnythingLLM API
 - 相同标题的文件会更新而非创建新文件
-- 知识库自动向量化处理
+- 知识库自动向量化处理（按文件夹分组）
 - 可使用 `/list-knowledge` 查看已同步内容
 
 ## 相关命令
