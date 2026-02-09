@@ -1,7 +1,7 @@
 # AnythingLLM Integration - Claude Code Plugin
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](https://github.com/youdao/anythingllm-integration)
+[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](https://github.com/youdao/anythingllm-integration)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
 > 🚀 AnythingLLM 知识库集成 - 为 Claude Code 提供自动查询和智能同步功能
@@ -132,14 +132,15 @@ Claude 会自动：
 
 ## 🎯 核心功能
 
-### 1️⃣ MCP 服务器（4 个工具）
+### 1️⃣ MCP 服务器（5 个工具）
 
 | 工具 | 描述 | 参数 |
 |------|------|------|
 | `anythingllm_search` | 向量搜索知识库 | query (必需), workspace (可选) |
 | `anythingllm_list_workspaces` | 列出所有工作区 | - |
 | `anythingllm_create_workspace` | 创建新工作区 | name (必需) |
-| `anythingllm_upload_document` | 上传文档（自动向量化） | workspace, title, content (必需) |
+| `anythingllm_upload_document` | 上传文档（自动嵌入+更新） | workspace, title, content (必需), folder (可选) |
+| `anythingllm_list_documents` | 列出工作区文档 | workspace (必需) |
 
 **API 说明**：
 - 使用 `/v1/document/raw-text` 端点（官方标准）
@@ -298,7 +299,7 @@ Youdao
 
 ---
 
-**版本**：1.3.0
+**版本**：1.4.0
 **更新日期**：2026-02-07
 **状态**：✅ 生产就绪
 
@@ -306,7 +307,7 @@ Youdao
 
 查看 [CHANGELOG.md](CHANGELOG.md) 了解完整版本历史和详细变更信息。
 
-### 最新版本亮点 (v1.3.0)
+### 最新版本亮点 (v1.4.0)
 - ✨ 使用官方 AnythingLLM API，性能提升 3 倍
 - ✨ 自动向量嵌入，无需手动触发
 - 🐛 修复多个配置和上传问题
