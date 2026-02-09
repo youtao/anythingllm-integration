@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-**项目**: anythingllm-integration v1.4.0
+**项目**: anythingllm-integration
 **功能**: AnythingLLM 知识库集成，提供自动查询和同步功能
 
 ## MCP 工具（5 个）
@@ -93,7 +93,7 @@ ANYTHINGLLM_WORKSPACE="default-workspace"  # 可选
 
 所有文件应使用**相同的版本号**（格式：`x.y.z`）。
 
-**示例**：v1.4.0
+**示例**：
 - package.json: `"version": "1.4.0"`
 - mcp-server/package.json: `"version": "1.4.0"`
 - .claude-plugin/plugin.json: `"version": "1.4.0"`
