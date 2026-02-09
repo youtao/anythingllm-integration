@@ -1,7 +1,7 @@
 # AnythingLLM Integration - Claude Code Plugin
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](https://github.com/youdao/anythingllm-integration)
+[![Version](https://img.shields.io/badge/version-1.5.1-blue.svg)](https://github.com/youdao/anythingllm-integration)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
 > 🚀 AnythingLLM 知识库集成 - 为 Claude Code 提供自动查询和智能同步功能

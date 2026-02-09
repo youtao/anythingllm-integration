@@ -390,7 +390,7 @@ async function listDocuments(workspaceSlug) {
 const server = new Server(
   {
     name: 'anythingllm-mcp-server',
-    version: '1.4.1',
+    version: '1.5.1',
   },
   {
     capabilities: {
