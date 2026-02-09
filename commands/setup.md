@@ -140,7 +140,6 @@ claude plugin install /home/youtao/projects/anythingllm-integration --scope glob
 
 ```
 /mcp                    # 查看 MCP 服务器列表
-/list-knowledge         # 查看知识库（如果有）
 ```
 
 **预期结果**：

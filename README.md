@@ -122,7 +122,6 @@ Claude 会自动：
 /sync-knowledge "PostgreSQL 18"              # 网络搜索同步
 /sync-knowledge "Vue 文档" ~/docs/guide.md     # 上传本地文件
 /sync-knowledge "React 19" https://react.dev    # 抓取网页内容
-/list-knowledge                           # 列出知识库
 ```
 
 **智能识别**：
@@ -193,8 +192,7 @@ anythingllm-integration/
 │   └── force-knowledge-query.sh # 强制查询脚本
 ├── commands/                    # 斜杠命令
 │   ├── setup.md                 # 安装配置
-│   ├── sync-knowledge.md       # 智能同步
-│   └── list-knowledge.md       # 列出知识库
+│   └── sync-knowledge.md       # 智能同步
 ├── mcp-server/                  # MCP 服务器
 │   ├── index.js                # 主程序
 │   └── package.json

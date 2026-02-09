@@ -204,8 +204,3 @@ knowledge/
 - 确保已配置 AnythingLLM API
 - 相同标题的文件会更新而非创建新文件
 - 知识库自动向量化处理（按文件夹分组）
-- 可使用 `/list-knowledge` 查看已同步内容
-
-## 相关命令
-
-- `/list-knowledge` - 列出所有已同步的知识库内容
