@@ -2,7 +2,7 @@
   "mcpServers": {
     "anythingllm": {
       "command": "npx",
-      "args": ["-y", "@woyo/anythingllm-mcp-server"],
+      "args": ["-y", "@youtao/anythingllm-mcp-server"],
       "env": {
         "ANYTHINGLLM_BASE_URL": "${ANYTHINGLLM_BASE_URL}",
         "ANYTHINGLLM_API_KEY": "${ANYTHINGLLM_API_KEY}"
