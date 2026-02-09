@@ -20,10 +20,16 @@
 - **场景**: 技术问题优先使用此工具查询知识库
 
 ### anythingllm_upload_document
-- **参数**: `workspace`, `title`, `content` (必需), `folder` (可选), `metadata` (可选)
+- **参数**:
+  - `workspace` (必需)
+  - `filePath` (必需)
+  - `title` (可选，默认使用文件名)
+  - `folder` (可选)
+  - `metadata` (可选)
+- **支持格式**: PDF, Word, 图片, CSV 等多种文件格式
 - **功能**:
-  - 自动嵌入到工作区（两步 API 流程）
-  - 同名文件自动更新（先删后加）
+  - 自动提取文件中的文本内容
+  - 自动嵌入到工作区
   - 支持文件夹参数组织文档
 
 ## 强制查询机制

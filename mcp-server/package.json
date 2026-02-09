@@ -1,6 +1,6 @@
 {
   "name": "anythingllm-mcp-server",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "MCP Server for AnythingLLM integration",
   "main": "index.js",
   "type": "module",

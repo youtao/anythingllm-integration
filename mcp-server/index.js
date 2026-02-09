@@ -7,6 +7,9 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import axios from 'axios';
+import fs from 'fs/promises';
+import path from 'path';
+import mime from 'mime-types';
 
 // 从环境变量读取配置
 const CONFIG = {
@@ -102,6 +105,38 @@ async function healthCheck() {
 
 console.error(`AnythingLLM MCP 配置: ${CONFIG.baseURL}`);
 
+// ==================== 辅助函数 ====================
+
+// 验证文件路径
+async function validateFilePath(filePath) {
+  try {
+    const absolutePath = path.resolve(filePath);
+    const stats = await fs.stat(absolutePath);
+
+    if (!stats.isFile()) {
+      throw new Error('路径不是一个文件');
+    }
+
+    return {
+      success: true,
+      absolutePath,
+      size: stats.size,
+      exists: true
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      exists: false
+    };
+  }
+}
+
+// 获取 MIME 类型
+function getMimeType(filePath) {
+  return mime.lookup(filePath) || 'application/octet-stream';
+}
+
 // ==================== 核心 API 函数 ====================
 
 // 获取工作区列表
@@ -140,71 +175,94 @@ async function createWorkspace(name) {
   }
 }
 
-// 上传文档到工作区（分两步：上传 + 嵌入）
-async function uploadDocument(workspaceSlug, title, content, folder = null, metadata = {}) {
+// 上传文件到工作区（支持 PDF, Word, 图片等）
+async function uploadDocumentFile(workspaceSlug, filePath, title, folder = null, metadata = {}) {
   try {
-    // 步骤 1: 上传文档到 custom-documents
-    const requestBody = {
-      textContent: content,
-      metadata: {
-        title: title,
-        ...(folder && { folder }),  // 支持文件夹参数
-        ...metadata
-      }
-      // 注意：不再使用 addToWorkspaces 参数（该参数可能不生效）
-    };
+    // 步骤 1: 验证文件
+    const validation = await validateFilePath(filePath);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: `文件验证失败: ${validation.error}`
+      };
+    }
 
+    const absolutePath = validation.absolutePath;
+    const mimeType = getMimeType(absolutePath);
+
+    // 步骤 2: 使用 form-data 构建请求
+    const FormData = (await import('form-data')).default;
+    const form = new FormData();
+
+    // 添加文件
+    form.append('file', await fs.readFile(absolutePath), {
+      filename: path.basename(absolutePath),
+      contentType: mimeType
+    });
+
+    // 添加元数据
+    const fileMetadata = {
+      title: title || path.basename(absolutePath),
+      ...(folder && { folder }),
+      ...metadata
+    };
+    form.append('metadata', JSON.stringify(fileMetadata));
+
+    // 步骤 3: 上传文件
     const response = await axios.post(
-      `${CONFIG.baseURL}/v1/document/raw-text`,
-      requestBody,
+      `${CONFIG.baseURL}/v1/document/upload`,
+      form,
       {
-        headers: getHeaders(),
-        timeout: 60000  // 文档处理可能需要较长时间
+        headers: {
+          ...getHeaders(),
+          ...form.getHeaders()
+        },
+        timeout: 120000  // 文件上传需要更长超时
       }
     );
 
     if (!response.data.success || !response.data.documents) {
       return {
         success: false,
-        error: response.data.error || '文档上传失败'
+        error: response.data.error || '文件上传失败'
       };
     }
 
     const doc = response.data.documents[0];
-    const docLocation = doc.location; // 例如: "custom-documents/file-abc123.json"
+    const docLocation = doc.location;
 
-    // 步骤 2: 嵌入到工作区（使用官方 update-embeddings API）
+    // 步骤 4: 嵌入到工作区
     try {
-      const embedResponse = await axios.post(
+      await axios.post(
         `${CONFIG.baseURL}/v1/workspace/${workspaceSlug}/update-embeddings`,
         { adds: [docLocation] },
         {
           headers: getHeaders(),
-          timeout: 60000  // 嵌入操作可能需要较长时间
+          timeout: 60000
         }
       );
 
       return {
         success: true,
-        message: '文档上传并嵌入成功',
+        message: '文件上传并嵌入成功',
         docId: doc.id,
         docLocation: docLocation,
         title: doc.title,
-        wordCount: doc.wordCount,
-        tokenCount: doc.token_count_estimate
+        fileName: path.basename(absolutePath),
+        fileSize: validation.size,
+        mimeType: mimeType
       };
     } catch (embedError) {
-      // 嵌入失败，返回部分成功信息
       return {
         success: false,
-        error: `文档上传成功但嵌入失败: ${handleApiError(embedError, '嵌入')}`,
-        docLocation: docLocation  // 返回文档位置，便于手动重试
+        error: `文件上传成功但嵌入失败: ${handleApiError(embedError, '嵌入')}`,
+        docLocation: docLocation
       };
     }
   } catch (error) {
     return {
       success: false,
-      error: handleApiError(error, '上传文档')
+      error: handleApiError(error, '上传文件')
     };
   }
 }
@@ -248,59 +306,10 @@ async function searchDocuments(query, workspaceSlug = null) {
   }
 }
 
-// 查找工作区中指定标题的文档
-async function findDocumentByTitle(workspaceSlug, title) {
-  try {
-    const response = await axios.get(
-      `${CONFIG.baseURL}/v1/workspace/${workspaceSlug}/documents`,
-      {
-        headers: getHeaders(),
-        timeout: 10000
-      }
-    );
-
-    if (response.data.documents) {
-      return response.data.documents.find(doc => doc.title === title);
-    }
-    return null;
-  } catch (error) {
-    // 查询失败不阻塞，返回 null
-    console.error('查询文档列表失败:', error.message);
-    return null;
-  }
-}
-
-// 删除指定文档
-async function deleteDocument(docLocation) {
-  try {
-    await axios.post(
-      `${CONFIG.baseURL}/v1/document/delete`,
-      { docLocation },
-      {
-        headers: getHeaders(),
-        timeout: 10000
-      }
-    );
-    return { success: true };
-  } catch (error) {
-    return {
-      success: false,
-      error: handleApiError(error, '删除文档')
-    };
-  }
-}
-
-// 上传文档并支持同名更新
-async function uploadDocumentWithUpdate(workspaceSlug, title, content, folder = null, metadata = {}) {
-  // 步骤 0: 检查是否存在同名文档
-  const existingDoc = await findDocumentByTitle(workspaceSlug, title);
-  if (existingDoc) {
-    console.error(`检测到同名文档 "${title}"，先删除旧版本`);
-    await deleteDocument(existingDoc.location);
-  }
-
-  // 继续执行上传流程
-  return await uploadDocument(workspaceSlug, title, content, folder, metadata);
+// 上传文档
+async function uploadDocumentWithUpdate(workspaceSlug, title, filePath, folder = null, metadata = {}) {
+  // 直接使用文件上传
+  return await uploadDocumentFile(workspaceSlug, filePath, title, folder, metadata);
 }
 
 // 列出工作区中的所有文档
@@ -383,7 +392,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'anythingllm_upload_document',
-        description: '向指定工作区上传文档。文档会自动向量化并添加到知识库中。同名文件会自动更新。',
+        description: '向指定工作区上传文件（支持 PDF、Word、图片等）。文件会自动提取文本内容并嵌入到知识库中。',
         inputSchema: {
           type: 'object',
           properties: {
@@ -391,13 +400,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: 'string',
               description: '目标工作区标识符',
             },
+            filePath: {
+              type: 'string',
+              description: '本地文件路径（支持 PDF, Word, 图片等）',
+            },
             title: {
               type: 'string',
-              description: '文档标题',
-            },
-            content: {
-              type: 'string',
-              description: '文档内容（支持 Markdown）',
+              description: '文档标题（可选，默认使用文件名）',
             },
             folder: {
               type: 'string',
@@ -408,7 +417,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: '可选的元数据（如 tags, category 等）',
             },
           },
-          required: ['workspace', 'title', 'content'],
+          required: ['workspace', 'filePath'],
         },
       },
       {
@@ -477,10 +486,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'anythingllm_upload_document': {
+        const title = args.title || path.basename(args.filePath);
+
         const result = await uploadDocumentWithUpdate(
           args.workspace,
-          args.title,
-          args.content,
+          title,
+          args.filePath,
           args.folder || null,
           args.metadata
         );
@@ -533,7 +544,7 @@ async function main() {
   // 3. 启动 MCP 服务器
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('AnythingLLM MCP 服务器已启动 v1.4.1');
+  console.error('AnythingLLM MCP 服务器已启动 v1.5.0');
   console.error('支持功能: 搜索、列出工作区、创建工作区、上传文档、列出文档');
 }
 
