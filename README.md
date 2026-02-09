@@ -132,12 +132,11 @@ Claude 会自动：
 
 ## 🎯 核心功能
 
-### 1️⃣ MCP 服务器（5 个工具）
+### 1️⃣ MCP 服务器（4 个工具）
 
 | 工具 | 描述 | 参数 |
 |------|------|------|
 | `anythingllm_search` | 向量搜索知识库 | query (必需), workspace (可选) |
-| `anythingllm_chat` | 基于 RAG 的问答 | message (必需), workspace (可选) |
 | `anythingllm_list_workspaces` | 列出所有工作区 | - |
 | `anythingllm_create_workspace` | 创建新工作区 | name (必需) |
 | `anythingllm_upload_document` | 上传文档（自动向量化） | workspace, title, content (必需) |

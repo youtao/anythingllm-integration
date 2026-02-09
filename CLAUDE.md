@@ -5,12 +5,11 @@
 **项目**: anythingllm-integration v1.3.0
 **功能**: AnythingLLM 知识库集成，提供自动查询和同步功能
 
-## MCP 工具（5 个）
+## MCP 工具（4 个）
 
 | 工具 | 用途 | 优先级 |
 |------|------|--------|
 | `anythingllm_search` | 向量搜索知识库 | ⭐⭐⭐ |
-| `anythingllm_chat` | RAG 智能问答 | ⭐⭐ |
 | `anythingllm_list_workspaces` | 列出所有工作区 | ⭐ |
 | `anythingllm_create_workspace` | 创建新工作区 | ⭐ |
 | `anythingllm_upload_document` | 上传文档（自动向量化） | ⭐⭐ |
@@ -18,10 +17,6 @@
 ### anythingllm_search
 - **参数**: `query` (必需), `workspace` (可选)
 - **场景**: 技术问题优先使用此工具查询知识库
-
-### anythingllm_chat
-- **参数**: `message` (必需), `workspace` (可选)
-- **场景**: 需要详细、结构化的回答时使用
 
 ### anythingllm_upload_document
 - **参数**: `workspace`, `title`, `content` (必需), `metadata` (可选)

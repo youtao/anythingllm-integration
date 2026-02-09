@@ -226,50 +226,6 @@ async function searchDocuments(query, workspaceSlug = null) {
   }
 }
 
-// 发送聊天请求
-async function chatWithWorkspace(message, workspaceSlug = null) {
-  try {
-    let slug = workspaceSlug || CONFIG.workspaceSlug;
-
-    if (!slug) {
-      const result = await getWorkspaces();
-      if (!result.success) {
-        return { error: result.error };
-      }
-      const workspaces = result.workspaces;
-      if (workspaces.length > 0) {
-        slug = workspaces[0].slug;
-        CONFIG.workspaceSlug = slug;
-      } else {
-        return { error: '未找到工作区' };
-      }
-    }
-
-    const response = await axios.post(
-      `${CONFIG.baseURL}/v1/workspace/${slug}/chat`,
-      {
-        message,
-        mode: 'chat',
-        sessionId: 'mcp-session-' + Date.now()
-      },
-      {
-        headers: getHeaders(),
-        timeout: 30000  // 聊天可能需要较长时间
-      }
-    );
-
-    return {
-      success: true,
-      workspace: slug,
-      response: response.data.textResponse,
-      sources: response.data.sources || []
-    };
-  } catch (error) {
-    const message = handleApiError(error, '聊天');
-    return { success: false, error: message };
-  }
-}
-
 // ==================== MCP 服务器 ====================
 
 const server = new Server(
@@ -304,24 +260,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
           },
           required: ['query'],
-        },
-      },
-      {
-        name: 'anythingllm_chat',
-        description: '使用 AnythingLLM 进行智能问答，结合本地知识库和 LLM。会自动检索相关文档并基于文档内容生成回答。',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            message: {
-              type: 'string',
-              description: '用户消息或问题',
-            },
-            workspace: {
-              type: 'string',
-              description: '工作区标识符（可选）',
-            },
-          },
-          required: ['message'],
         },
       },
       {
@@ -384,18 +322,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (name) {
       case 'anythingllm_search': {
         const result = await searchDocuments(args.query, args.workspace);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'anythingllm_chat': {
-        const result = await chatWithWorkspace(args.message, args.workspace);
         return {
           content: [
             {
@@ -480,7 +406,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('AnythingLLM MCP 服务器已启动 v1.3.0');
-  console.error('支持功能: 搜索、聊天、创建工作区、上传文档');
+  console.error('支持功能: 搜索、列出工作区、创建工作区、上传文档');
 }
 
 main().catch((error) => {
