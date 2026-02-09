@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-**项目**: anythingllm-integration v1.2.0
+**项目**: anythingllm-integration v1.3.0
 **功能**: AnythingLLM 知识库集成，提供自动查询和同步功能
 
 ## MCP 工具（5 个）
@@ -94,13 +94,13 @@ ANYTHINGLLM_WORKSPACE="default-workspace"  # 可选
 
 所有文件应使用**相同的版本号**（格式：`x.y.z`）。
 
-**示例**：v1.2.0
-- package.json: `"version": "1.2.0"`
-- mcp-server/package.json: `"version": "1.2.0"`
-- .claude-plugin/plugin.json: `"version": "1.2.0"`
-- .claude-plugin/marketplace.json: `"version": "1.2.0"` (两处)
-- mcp-server/index.js: `version: '1.2.0'`
-- README.md: `version-1.2.0` 和 `v1.2.0`
+**示例**：v1.3.0
+- package.json: `"version": "1.3.0"`
+- mcp-server/package.json: `"version": "1.3.0"`
+- .claude-plugin/plugin.json: `"version": "1.3.0"`
+- .claude-plugin/marketplace.json: `"version": "1.3.0"` (两处)
+- mcp-server/index.js: `version: '1.3.0'`
+- README.md: `version-1.3.0` 和 `v1.3.0`
 
 ### Release 检查清单
 

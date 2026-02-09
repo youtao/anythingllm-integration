@@ -275,7 +275,7 @@ async function chatWithWorkspace(message, workspaceSlug = null) {
 const server = new Server(
   {
     name: 'anythingllm-mcp-server',
-    version: '1.0.0',
+    version: '1.3.0',
   },
   {
     capabilities: {
@@ -479,7 +479,7 @@ async function main() {
   // 3. 启动 MCP 服务器
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('AnythingLLM MCP 服务器已启动 v1.2.0');
+  console.error('AnythingLLM MCP 服务器已启动 v1.3.0');
   console.error('支持功能: 搜索、聊天、创建工作区、上传文档');
 }
 
