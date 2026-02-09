@@ -16,7 +16,7 @@
 
 ## MCP 工具使用
 
-本项目通过 MCP 服务器提供 6 个工具，按使用优先级排序：
+本项目通过 MCP 服务器提供 5 个工具，按使用优先级排序：
 
 ### 1️⃣ anythingllm_search - 向量搜索
 
@@ -89,18 +89,6 @@
 - `metadata` (可选): 元数据（如 tags, category）
 
 **API 说明**: 使用官方 `/v1/document/raw-text` 端点，自动处理向量嵌入
-
-### 6️⃣ anythingllm_update_knowledge - 更新知识库
-
-**用途**: 便捷方法，结合搜索和上传功能
-
-**使用场景**:
-- 需要搜索并同步最新信息时
-
-**参数**:
-- `workspace` (必需): 目标工作区标识符
-- `topic` (必需): 要搜索和更新的主题
-- `query` (可选): 搜索查询（默认使用 topic）
 
 ## 斜杠命令
 
@@ -307,7 +295,7 @@ anythingllm-integration/
 
 | 文件 | 说明 |
 |------|------|
-| [mcp-server/index.js](mcp-server/index.js) | MCP 服务器实现，包含 6 个工具 |
+| [mcp-server/index.js](mcp-server/index.js) | MCP 服务器实现，包含 5 个工具 |
 | [commands/setup.md](commands/setup.md) | 安装配置命令文档 |
 | [commands/sync-knowledge.md](commands/sync-knowledge.md) | 同步命令文档 |
 | [hooks/hooks.json](hooks/hooks.json) | Hook 配置文件 |

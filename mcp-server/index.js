@@ -372,28 +372,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['workspace', 'title', 'content'],
         },
       },
-      {
-        name: 'anythingllm_update_knowledge',
-        description: '更新知识库：从网络搜索最新信息并上传到指定工作区。这是一个便捷方法，结合搜索和上传。',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            workspace: {
-              type: 'string',
-              description: '目标工作区标识符',
-            },
-            topic: {
-              type: 'string',
-              description: '要搜索和更新的主题',
-            },
-            query: {
-              type: 'string',
-              description: '搜索查询（可选，默认使用 topic）',
-            },
-          },
-          required: ['workspace', 'topic'],
-        },
-      },
     ],
   };
 });
@@ -474,56 +452,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case 'anythingllm_update_knowledge': {
-        const { workspace, topic, query } = args;
-        const searchQuery = query || topic;
-
-        // 返回详细的操作指南和示例
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify({
-                message: '请按以下步骤更新知识库:',
-                steps: [
-                  `1️⃣ 使用 Tavily 搜索工具查询: "${searchQuery}"`,
-                  '2️⃣ 整理搜索结果为 Markdown 格式',
-                  `3️⃣ 使用 anythingllm_upload_document 上传到工作区: ${workspace}`,
-                  '4️⃣ 验证文档已成功添加到知识库'
-                ],
-                tavily_search_example: {
-                  tool: 'tavily_search',
-                  parameters: {
-                    query: searchQuery,
-                    search_depth: 'basic',
-                    max_results: 10
-                  }
-                },
-                upload_example: {
-                  tool: 'anythingllm_upload_document',
-                  parameters: {
-                    workspace: workspace,
-                    title: `${topic} - ${new Date().toISOString().split('T')[0]}`,
-                    content: `# ${topic}\n\n## 搜索结果\n\n这里是使用 Tavily 搜索到的内容...\n\n## 参考资料\n\n- 来源1: ...\n- 来源2: ...`,
-                    metadata: {
-                      topic: topic,
-                      updated_at: new Date().toISOString(),
-                      source: 'tavily_search'
-                    }
-                  }
-                },
-                verification_command: `anythingllm_search "${topic}"`,
-                notes: [
-                  '💡 提示: 搜索结果应包含具体的版本号、配置步骤和代码示例',
-                  '💡 提示: 添加来源链接以便后续查阅',
-                  '💡 提示: 使用清晰的标题和分段结构'
-                ]
-              }, null, 2),
-            },
-          ],
-        };
-      }
-
       default:
         throw new Error(`未知工具: ${name}`);
     }
@@ -552,7 +480,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('AnythingLLM MCP 服务器已启动 v1.2.0');
-  console.error('支持功能: 搜索、聊天、创建工作区、上传文档、知识更新');
+  console.error('支持功能: 搜索、聊天、创建工作区、上传文档');
 }
 
 main().catch((error) => {
