@@ -140,50 +140,72 @@ async function createWorkspace(name) {
   }
 }
 
-// 上传文档到工作区（使用官方 /v1/document/raw-text 端点）
-async function uploadDocument(workspaceSlug, title, content, metadata = {}) {
+// 上传文档到工作区（分两步：上传 + 嵌入）
+async function uploadDocument(workspaceSlug, title, content, folder = null, metadata = {}) {
   try {
-    // 构建请求体 - 使用官方 API 标准
+    // 步骤 1: 上传文档到 custom-documents
     const requestBody = {
       textContent: content,
       metadata: {
         title: title,
+        ...(folder && { folder }),  // 支持文件夹参数
         ...metadata
-      },
-      addToWorkspaces: workspaceSlug  // 自动添加到指定工作区
+      }
+      // 注意：不再使用 addToWorkspaces 参数（该参数可能不生效）
     };
 
-    // 调用官方 /v1/document/raw-text 端点
     const response = await axios.post(
       `${CONFIG.baseURL}/v1/document/raw-text`,
       requestBody,
       {
         headers: getHeaders(),
-        timeout: 60000  // 文档处理和向量化可能需要较长时间
+        timeout: 60000  // 文档处理可能需要较长时间
       }
     );
 
-    // 官方 API 返回格式：{ success: true, error: null, documents: [...] }
-    if (response.data.success && response.data.documents) {
-      const doc = response.data.documents[0];
-      return {
-        success: true,
-        message: '文档上传并向量化成功',
-        docId: doc.id,
-        docLocation: doc.location,
-        title: doc.title,
-        wordCount: doc.wordCount,
-        tokenCount: doc.token_count_estimate
-      };
-    } else {
+    if (!response.data.success || !response.data.documents) {
       return {
         success: false,
         error: response.data.error || '文档上传失败'
       };
     }
+
+    const doc = response.data.documents[0];
+    const docLocation = doc.location; // 例如: "custom-documents/file-abc123.json"
+
+    // 步骤 2: 嵌入到工作区（使用官方 update-embeddings API）
+    try {
+      const embedResponse = await axios.post(
+        `${CONFIG.baseURL}/v1/workspace/${workspaceSlug}/update-embeddings`,
+        { adds: [docLocation] },
+        {
+          headers: getHeaders(),
+          timeout: 60000  // 嵌入操作可能需要较长时间
+        }
+      );
+
+      return {
+        success: true,
+        message: '文档上传并嵌入成功',
+        docId: doc.id,
+        docLocation: docLocation,
+        title: doc.title,
+        wordCount: doc.wordCount,
+        tokenCount: doc.token_count_estimate
+      };
+    } catch (embedError) {
+      // 嵌入失败，返回部分成功信息
+      return {
+        success: false,
+        error: `文档上传成功但嵌入失败: ${handleApiError(embedError, '嵌入')}`,
+        docLocation: docLocation  // 返回文档位置，便于手动重试
+      };
+    }
   } catch (error) {
-    const message = handleApiError(error, '上传文档');
-    return { success: false, error: message };
+    return {
+      success: false,
+      error: handleApiError(error, '上传文档')
+    };
   }
 }
 
@@ -222,6 +244,81 @@ async function searchDocuments(query, workspaceSlug = null) {
     };
   } catch (error) {
     const message = handleApiError(error, '搜索文档');
+    return { success: false, error: message };
+  }
+}
+
+// 查找工作区中指定标题的文档
+async function findDocumentByTitle(workspaceSlug, title) {
+  try {
+    const response = await axios.get(
+      `${CONFIG.baseURL}/v1/workspace/${workspaceSlug}/documents`,
+      {
+        headers: getHeaders(),
+        timeout: 10000
+      }
+    );
+
+    if (response.data.documents) {
+      return response.data.documents.find(doc => doc.title === title);
+    }
+    return null;
+  } catch (error) {
+    // 查询失败不阻塞，返回 null
+    console.error('查询文档列表失败:', error.message);
+    return null;
+  }
+}
+
+// 删除指定文档
+async function deleteDocument(docLocation) {
+  try {
+    await axios.post(
+      `${CONFIG.baseURL}/v1/document/delete`,
+      { docLocation },
+      {
+        headers: getHeaders(),
+        timeout: 10000
+      }
+    );
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: handleApiError(error, '删除文档')
+    };
+  }
+}
+
+// 上传文档并支持同名更新
+async function uploadDocumentWithUpdate(workspaceSlug, title, content, folder = null, metadata = {}) {
+  // 步骤 0: 检查是否存在同名文档
+  const existingDoc = await findDocumentByTitle(workspaceSlug, title);
+  if (existingDoc) {
+    console.error(`检测到同名文档 "${title}"，先删除旧版本`);
+    await deleteDocument(existingDoc.location);
+  }
+
+  // 继续执行上传流程
+  return await uploadDocument(workspaceSlug, title, content, folder, metadata);
+}
+
+// 列出工作区中的所有文档
+async function listDocuments(workspaceSlug) {
+  try {
+    const response = await axios.get(
+      `${CONFIG.baseURL}/v1/workspace/${workspaceSlug}/documents`,
+      {
+        headers: getHeaders(),
+        timeout: 10000
+      }
+    );
+    return {
+      success: true,
+      documents: response.data.documents || []
+    };
+  } catch (error) {
+    const message = handleApiError(error, '获取文档列表');
     return { success: false, error: message };
   }
 }
@@ -286,7 +383,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'anythingllm_upload_document',
-        description: '向指定工作区上传文档。文档会被向量化并添加到知识库中。支持 Markdown 格式。',
+        description: '向指定工作区上传文档。文档会自动向量化并添加到知识库中。同名文件会自动更新。',
         inputSchema: {
           type: 'object',
           properties: {
@@ -302,12 +399,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: 'string',
               description: '文档内容（支持 Markdown）',
             },
+            folder: {
+              type: 'string',
+              description: '可选的文件夹名称，用于组织文档',
+            },
             metadata: {
               type: 'object',
               description: '可选的元数据（如 tags, category 等）',
             },
           },
           required: ['workspace', 'title', 'content'],
+        },
+      },
+      {
+        name: 'anythingllm_list_documents',
+        description: '列出工作区中的所有文档',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            workspace: {
+              type: 'string',
+              description: '工作区标识符',
+            },
+          },
+          required: ['workspace'],
         },
       },
     ],
@@ -362,12 +477,25 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'anythingllm_upload_document': {
-        const result = await uploadDocument(
+        const result = await uploadDocumentWithUpdate(
           args.workspace,
           args.title,
           args.content,
+          args.folder || null,
           args.metadata
         );
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'anythingllm_list_documents': {
+        const result = await listDocuments(args.workspace);
         return {
           content: [
             {
@@ -406,7 +534,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('AnythingLLM MCP 服务器已启动 v1.3.0');
-  console.error('支持功能: 搜索、列出工作区、创建工作区、上传文档');
+  console.error('支持功能: 搜索、列出工作区、创建工作区、上传文档、列出文档');
 }
 
 main().catch((error) => {

@@ -5,22 +5,26 @@
 **项目**: anythingllm-integration v1.3.0
 **功能**: AnythingLLM 知识库集成，提供自动查询和同步功能
 
-## MCP 工具（4 个）
+## MCP 工具（5 个）
 
 | 工具 | 用途 | 优先级 |
 |------|------|--------|
 | `anythingllm_search` | 向量搜索知识库 | ⭐⭐⭐ |
 | `anythingllm_list_workspaces` | 列出所有工作区 | ⭐ |
 | `anythingllm_create_workspace` | 创建新工作区 | ⭐ |
-| `anythingllm_upload_document` | 上传文档（自动向量化） | ⭐⭐ |
+| `anythingllm_upload_document` | 上传文档（自动嵌入+更新） | ⭐⭐ |
+| `anythingllm_list_documents` | 列出工作区文档 | ⭐ |
 
 ### anythingllm_search
 - **参数**: `query` (必需), `workspace` (可选)
 - **场景**: 技术问题优先使用此工具查询知识库
 
 ### anythingllm_upload_document
-- **参数**: `workspace`, `title`, `content` (必需), `metadata` (可选)
-- **API**: 使用官方 `/v1/document/raw-text` 端点，自动向量嵌入
+- **参数**: `workspace`, `title`, `content` (必需), `folder` (可选), `metadata` (可选)
+- **功能**:
+  - 自动嵌入到工作区（两步 API 流程）
+  - 同名文件自动更新（先删后加）
+  - 支持文件夹参数组织文档
 
 ## 强制查询机制
 
