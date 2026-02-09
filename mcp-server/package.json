@@ -1,18 +1,44 @@
 {
-  "name": "anythingllm-mcp-server",
-  "version": "1.5.0",
-  "description": "MCP Server for AnythingLLM integration",
+  "name": "@youtao/anythingllm-mcp-server",
+  "version": "1.5.1",
+  "description": "MCP Server for AnythingLLM integration - 支持 PDF、Word、图片等多种文件格式上传",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "anythingllm-mcp-server": "./index.js"
+  },
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["mcp", "anythingllm", "rag", "knowledge-base"],
-  "author": "",
+  "keywords": [
+    "mcp",
+    "anythingllm",
+    "rag",
+    "knowledge-base",
+    "claude-code"
+  ],
+  "author": "youtao <youtao@lytlc.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/youtao/anythingllm-integration.git"
+  },
+  "bugs": {
+    "url": "https://github.com/youtao/anythingllm-integration/issues"
+  },
+  "homepage": "https://github.com/youtao/anythingllm-integration#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "axios": "^1.13.4"
-  }
+    "axios": "^1.13.4",
+    "form-data": "^4.0.0",
+    "mime-types": "^2.1.35"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ]
 }
