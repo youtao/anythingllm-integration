@@ -54,7 +54,8 @@ model: "sonnet"
 
 ### 3. 执行同步
 - 整理内容为 Markdown 格式
-- **必须按主题分文件夹**：`knowledge/<主题>/<文件名>.md`
+- 在文件顶部添加元数据（日期、来源等）
+- **必须按主题分文件夹**：`knowledge/<主题>/<简洁文件名>.md`
 - 调用 `anythingllm_upload_document` 上传
 
 ### 4. 验证完成
@@ -67,8 +68,8 @@ model: "sonnet"
 ```
 knowledge/
 ├── postgresql-18/          # 主题文件夹
-│   ├── 2026-02-06-features.md
-│   └── 2026-02-06-performance.md
+│   ├── features.md
+│   └── performance.md
 ├── vue-3.5/                # 主题文件夹
 │   └── guide.md
 └── react-19/               # 主题文件夹
@@ -77,8 +78,55 @@ knowledge/
 
 **规则**：
 - ✅ 必须按主题创建子文件夹
-- ✅ 文件名包含日期和标题
+- ✅ 文件名简洁明了（不含日期）
+- ✅ 版本信息（日期、来源）放在文件内容顶部
 - ❌ 禁止直接在 knowledge 根目录创建文件
+
+## 文件内容格式
+
+每个文件应包含以下元数据头部：
+
+```markdown
+---
+title: "文档标题"
+date: "2026-02-10"
+source: "网络搜索/URL抓取/本地文件"
+keywords: ["关键词1", "关键词2"]
+---
+
+# 文档内容
+
+...
+```
+
+**示例**：
+
+网络搜索获取的内容：
+```markdown
+---
+title: "PostgreSQL 18 性能优化"
+date: "2026-02-10"
+source: "网络搜索"
+query: "PostgreSQL 18 性能优化 最新 特性"
+url: "https://..."
+---
+
+# PostgreSQL 18 性能优化
+...
+```
+
+URL 抓取的内容：
+```markdown
+---
+title: "React 19 更新说明"
+date: "2026-02-10"
+source: "URL 抓取"
+url: "https://react.dev/blog/react-19"
+---
+
+# React 19
+...
+```
 
 ## MCP 工具调用
 
@@ -111,7 +159,8 @@ knowledge/
 ```
 1. 搜索 "PostgreSQL 18 性能优化 最新 特性 2025"
 2. 创建 `knowledge/postgresql-18-performance/`
-3. 保存到 `knowledge/postgresql-18-performance/2026-02-06-优化.md`
+3. 保存到 `knowledge/postgresql-18-performance/optimization.md`
+   - 文件顶部包含：日期、搜索关键词、来源链接
 4. 上传并验证
 
 ### 本地文件
@@ -120,7 +169,8 @@ knowledge/
 ```
 1. 读取文件
 2. 创建 `knowledge/vue-guide/`
-3. 保存到 `knowledge/vue-guide/vue3-guide.md`
+3. 保存到 `knowledge/vue-guide/guide.md`
+   - 保留原标题和内容
 4. 上传并验证
 
 ### URL 抓取
@@ -129,5 +179,6 @@ knowledge/
 ```
 1. 抓取网页
 2. 创建 `knowledge/react-19/`
-3. 保存到 `knowledge/react-19/react-19-blog.md`
+3. 保存到 `knowledge/react-19/blog.md`
+   - 文件顶部包含：日期、来源 URL
 4. 上传并验证

@@ -175,6 +175,48 @@ async function createWorkspace(name) {
   }
 }
 
+// 查找工作区中指定标题的文档
+async function findDocumentByTitle(workspaceSlug, title) {
+  try {
+    const response = await axios.get(
+      `${CONFIG.baseURL}/v1/workspace/${workspaceSlug}/documents`,
+      {
+        headers: getHeaders(),
+        timeout: 10000
+      }
+    );
+
+    if (response.data.documents) {
+      return response.data.documents.find(doc => doc.title === title);
+    }
+    return null;
+  } catch (error) {
+    // 查询失败不阻塞，返回 null
+    console.error('查询文档列表失败:', error.message);
+    return null;
+  }
+}
+
+// 删除指定文档
+async function deleteDocument(docLocation) {
+  try {
+    await axios.post(
+      `${CONFIG.baseURL}/v1/document/delete`,
+      { docLocation },
+      {
+        headers: getHeaders(),
+        timeout: 10000
+      }
+    );
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: handleApiError(error, '删除文档')
+    };
+  }
+}
+
 // 上传文件到工作区（支持 PDF, Word, 图片等）
 async function uploadDocumentFile(workspaceSlug, filePath, title, folder = null, metadata = {}) {
   try {
@@ -203,10 +245,14 @@ async function uploadDocumentFile(workspaceSlug, filePath, title, folder = null,
     // 添加元数据
     const fileMetadata = {
       title: title || path.basename(absolutePath),
-      ...(folder && { folder }),
       ...metadata
     };
     form.append('metadata', JSON.stringify(fileMetadata));
+
+    // 添加文件夹参数（单独字段）
+    if (folder) {
+      form.append('folder', folder);
+    }
 
     // 步骤 3: 上传文件
     const response = await axios.post(
@@ -308,7 +354,14 @@ async function searchDocuments(query, workspaceSlug = null) {
 
 // 上传文档
 async function uploadDocumentWithUpdate(workspaceSlug, title, filePath, folder = null, metadata = {}) {
-  // 直接使用文件上传
+  // 步骤 0: 检查是否存在同名文档
+  const existingDoc = await findDocumentByTitle(workspaceSlug, title);
+  if (existingDoc) {
+    console.error(`检测到同名文档 "${title}"，先删除旧版本`);
+    await deleteDocument(existingDoc.location);
+  }
+
+  // 继续执行上传流程
   return await uploadDocumentFile(workspaceSlug, filePath, title, folder, metadata);
 }
 
