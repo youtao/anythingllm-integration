@@ -71,6 +71,56 @@ ANYTHINGLLM_API_KEY="your-api-key"
 ANYTHINGLLM_WORKSPACE="default-workspace"  # 可选
 ```
 
+## 版本管理规范
+
+### ⚠️ 强制规范
+
+**每次 release 时必须同步修改以下文件中的版本号**，确保版本一致性。
+
+### 版本号文件位置
+
+| 文件 | 版本号位置 |
+|------|-----------|
+| `package.json` | `version` |
+| `mcp-server/package.json` | `version` |
+| `.claude-plugin/plugin.json` | `version` |
+| `.claude-plugin/marketplace.json` | `metadata.version` |
+| `.claude-plugin/marketplace.json` | `plugins[0].version` |
+| `mcp-server/index.js` | `Server version` |
+| `README.md` | Badge 版本 |
+| `README.md` | "最新版本亮点" |
+
+### 版本号统一规则
+
+所有文件应使用**相同的版本号**（格式：`x.y.z`）。
+
+**示例**：v1.2.0
+- package.json: `"version": "1.2.0"`
+- mcp-server/package.json: `"version": "1.2.0"`
+- .claude-plugin/plugin.json: `"version": "1.2.0"`
+- .claude-plugin/marketplace.json: `"version": "1.2.0"` (两处)
+- mcp-server/index.js: `version: '1.2.0'`
+- README.md: `version-1.2.0` 和 `v1.2.0`
+
+### Release 检查清单
+
+```bash
+# 1. 搜索所有版本号
+grep -r "1\.[0-9]\+\.[0-9]\+" --include="*.json" --include="*.js" --include="*.md" .
+
+# 2. 确认所有版本号一致
+
+# 3. 提交更改
+git add -A
+git commit -m "release: v1.3.0"
+
+# 4. 创建 git tag
+git tag v1.3.0
+
+# 5. 推送
+git push && git push --tags
+```
+
 ## 关键文件
 
 | 文件 | 说明 |
