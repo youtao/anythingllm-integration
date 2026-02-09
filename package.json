@@ -1,6 +1,6 @@
 {
   "name": "anythingllm-integration",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "AnythingLLM 知识库集成 - Claude Code Plugin",
   "type": "module",
   "main": "mcp-server/index.js",

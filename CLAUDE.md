@@ -94,12 +94,12 @@ ANYTHINGLLM_WORKSPACE="default-workspace"  # 可选
 所有文件应使用**相同的版本号**（格式：`x.y.z`）。
 
 **示例**：
-- package.json: `"version": "1.4.0"`
-- mcp-server/package.json: `"version": "1.4.0"`
-- .claude-plugin/plugin.json: `"version": "1.4.0"`
-- .claude-plugin/marketplace.json: `"version": "1.4.0"` (两处)
-- mcp-server/index.js: `version: '1.4.0'`
-- README.md: `version-1.4.0` 和 `v1.4.0`
+- package.json: `"version": "1.4.1"`
+- mcp-server/package.json: `"version": "1.4.1"`
+- .claude-plugin/plugin.json: `"version": "1.4.1"`
+- .claude-plugin/marketplace.json: `"version": "1.4.1"` (两处)
+- mcp-server/index.js: `version: '1.4.1'`
+- README.md: `version-1.4.1` 和 `v1.4.1`
 
 ### Release 检查清单
 
