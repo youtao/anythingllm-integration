@@ -6,10 +6,8 @@ model: "sonnet"
 
 # /sync-knowledge - 智能同步知识库
 
-## 功能说明
-
 统一的同步命令，支持三种方式同步知识到 AnythingLLM：
-- 🌐 **网络搜索** - 自动搜索并同步最新内容
+- 🌐 **网络搜索** - 使用 WebSearch 搜索并同步最新内容
 - 📁 **本地文件** - 上传本地文档
 - 🔗 **URL 抓取** - 抓取网页内容
 
@@ -19,188 +17,117 @@ model: "sonnet"
 /sync-knowledge [主题] [文件路径或URL]
 ```
 
-### 使用场景
+### 场景
 
-**场景 1：网络搜索（默认）**
+**网络搜索（默认）**
 ```
 /sync-knowledge "PostgreSQL 18 新特性"
 ```
-AI 将自动搜索网络并同步内容
 
-**场景 2：本地文件**
+**本地文件**
 ```
 /sync-knowledge "Vue 文档" ~/docs/guide.md
 ```
-AI 将读取并上传本地文件
 
-**场景 3：URL 抓取**
+**URL 抓取**
 ```
 /sync-knowledge "React 19" https://react.dev/blog/react-19
 ```
-AI 将抓取网页内容并同步
 
-**场景 4：无参数（交互模式）**
+**交互模式**
 ```
 /sync-knowledge
 ```
-AI 将询问您想要同步什么
 
 ## 执行流程
 
-当您执行 `/sync-knowledge` 命令时，AI 会：
+### 1. 确定工作区
+- 调用 `anythingllm_list_workspaces`
+- 为空则调用 `anythingllm_create_workspace <主题>`
+- 使用第一个工作区或用户指定的
 
-1. **分析输入参数**
-   - 如果没有参数：询问同步方式
-   - 如果是 URL：自动识别为 URL 抓取
-   - 如果是文件路径：自动识别为文件上传
-   - 如果只有主题：执行网络搜索
+### 2. 分析输入参数
+- 无参数：询问同步方式
+- 是 URL：识别为 URL 抓取
+- 是文件路径：识别为文件上传
+- 只有主题：执行网络搜索
 
-2. **确认同步内容**
-   - 显示将要同步的内容摘要
-   - 等待您确认
+### 3. 执行同步
+- 整理内容为 Markdown 格式
+- **必须按主题分文件夹**：`knowledge/<主题>/<文件名>.md`
+- 调用 `anythingllm_upload_document` 上传
 
-3. **执行同步**
-   - 整理内容为 Markdown 格式
-   - **保存到 `knowledge/<主题>/` 目录（必须按主题分文件夹）**
-   - 上传到 AnythingLLM 知识库（使用 `/v1/document/raw-text` API）
-   - 向量嵌入自动处理，无需手动触发
+### 4. 验证完成
+- 调用 `anythingllm_list_documents <workspace>` 确认上传
+- 调用 `anythingllm_search "<主题关键词>" <workspace>` 测试搜索
+- 向用户报告：保存位置、工作区、搜索结果
 
-4. **返回结果**
-   - 显示文件保存位置
-   - 确认上传状态
-   - 显示所属主题文件夹
-
-## 参数说明
-
-### 主题（topic）
-- 用于组织知识库目录
-- 示例：PostgreSQL 18、Vue 3.5、React 19
-- 如果不提供，将根据内容自动生成
-
-### 文件路径或 URL（可选）
-- **文件路径**：支持相对路径和绝对路径
-  - 示例：`~/docs/guide.md`、`./tutorial.md`
-- **URL**：支持 HTTP/HTTPS 链接
-  - 示例：`https://vuejs.org/guide/`
-
-## 示例
-
-### 示例 1：网络搜索
-
-```
-/sync-knowledge "PostgreSQL 18 性能优化"
-```
-
-AI 执行流程：
-1. 搜索 "PostgreSQL 18 性能优化 最新 特性 2025"
-2. 整理为结构化 Markdown
-3. **创建主题文件夹** `knowledge/postgresql-18-performance/`
-4. 保存到 `knowledge/postgresql-18-performance/2026-02-06-优化.md`
-5. 上传到 AnythingLLM（按文件夹分组）
-
-### 示例 2：上传本地文件
-
-```
-/sync-knowledge "Vue 指南" ~/docs/vue3-guide.md
-```
-
-AI 执行流程：
-1. 读取 `~/docs/vue3-guide.md`
-2. 提取标题和内容
-3. **创建主题文件夹** `knowledge/vue-guide/`
-4. 保存到 `knowledge/vue-guide/vue3-guide.md`
-5. 上传到 AnythingLLM（按文件夹分组）
-
-### 示例 3：抓取 URL
-
-```
-/sync-knowledge "React 19" https://react.dev/blog/react-19
-```
-
-AI 执行流程：
-1. 抓取网页内容
-2. 转换为 Markdown 格式
-3. **创建主题文件夹** `knowledge/react-19/`
-4. 保存到 `knowledge/react-19/react-19-blog.md`
-5. 上传到 AnythingLLM（按文件夹分组）
-
-### 示例 4：交互模式
-
-```
-/sync-knowledge
-```
-
-AI 会询问：
-> 您想要同步什么内容？
->
-> 1. 🌐 从网络搜索
-> 2. 📁 上传本地文件
-> 3. 🔗 抓取网页内容
->
-> 请输入选项或直接描述您的需求
-
-## 智能识别规则
-
-AI 会自动判断您的意图：
-
-| 输入内容 | 识别为 | 操作 |
-|---------|--------|------|
-| `主题`（无其他参数） | 网络搜索 | 搜索主题相关内容 |
-| `主题 ~/path/file.md` | 本地文件 | 读取并上传文件 |
-| `主题 https://...` | URL 抓取 | 抓取网页内容 |
-|（无参数）| 交互模式 | 询问用户意图 |
-
-## 文件组织（必须按文件夹分组）
-
-⚠️ **重要**：所有文档必须按主题文件夹组织，不要直接放在 knowledge 根目录！
-
-同步的内容会自动保存到：
+## 文件组织规则
 
 ```
 knowledge/
-├── postgresql-18/              # 主题文件夹
+├── postgresql-18/          # 主题文件夹
 │   ├── 2026-02-06-features.md
-│   ├── 2026-02-06-performance.md
-│   └── 2026-02-06-security.md
-├── vue-3.5/                    # 主题文件夹
-│   ├── 2026-02-06-guide.md
-│   └── 2026-02-06-api.md
-└── react-19/                   # 主题文件夹
-    ├── 2026-02-06-blog.md
-    └── 2026-02-06-changes.md
+│   └── 2026-02-06-performance.md
+├── vue-3.5/                # 主题文件夹
+│   └── guide.md
+└── react-19/               # 主题文件夹
+    └── blog.md
 ```
 
-**组织规则**：
-- ✅ **必须**：按主题创建子文件夹
-- ✅ **必须**：使用主题作为文件夹名称
+**规则**：
+- ✅ 必须按主题创建子文件夹
 - ✅ 文件名包含日期和标题
-- ✅ 相同主题的文档放在同一文件夹
-- ❌ **禁止**：直接在 knowledge 根目录创建文件
+- ❌ 禁止直接在 knowledge 根目录创建文件
 
-**为什么需要分组？**
-- 便于查询时限定范围（只搜索特定主题）
-- AnythingLLM 会按文件夹建立索引
-- 避免不同主题的文档混在一起
+## MCP 工具调用
 
-## 注意事项
+| 工具 | 参数 | 说明 |
+|-----|------|------|
+| `anythingllm_list_workspaces` | - | 获取可用工作区 |
+| `anythingllm_create_workspace` | `name` | 创建新工作区 |
+| `anythingllm_upload_document` | `workspace`, `title`, `content`, `folder` | 上传文档 |
+| `anythingllm_list_documents` | `workspace` | 列出工作区文档 |
+| `anythingllm_search` | `query`, `workspace` | 搜索知识库 |
+
+## 错误处理
+
+**上传失败**
+- 报告 `anythingllm_upload_document` 返回的 error
+- 检查 API 密钥和连接状态
+
+**工作区不存在**
+- 自动创建工作区或使用第一个可用工作区
+
+**搜索失败但上传成功**
+- 告知文档已保存，搜索暂时不可用
+- 提供 `anythingllm_list_documents` 结果作为验证
+
+## 示例
 
 ### 网络搜索
-- 依赖 Tavily 搜索引擎
-- 搜索结果会整理为结构化文档
-- 自动提取关键信息和代码示例
+```
+/sync-knowledge "PostgreSQL 18 性能优化"
+```
+1. 搜索 "PostgreSQL 18 性能优化 最新 特性 2025"
+2. 创建 `knowledge/postgresql-18-performance/`
+3. 保存到 `knowledge/postgresql-18-performance/2026-02-06-优化.md`
+4. 上传并验证
 
 ### 本地文件
-- 支持 Markdown、TXT、PDF 格式
-- 确保文件路径正确且可访问
-- 大文件处理需要较长时间
+```
+/sync-knowledge "Vue 指南" ~/docs/vue3-guide.md
+```
+1. 读取文件
+2. 创建 `knowledge/vue-guide/`
+3. 保存到 `knowledge/vue-guide/vue3-guide.md`
+4. 上传并验证
 
 ### URL 抓取
-- 目标网站必须可访问
-- 某些网站有反爬虫限制
-- 动态加载内容可能无法抓取
-
-### 通用规则
-- ✅ **必须按主题文件夹组织**：不要直接放在 knowledge 根目录
-- 确保已配置 AnythingLLM API
-- 相同标题的文件会更新而非创建新文件
-- 知识库自动向量化处理（按文件夹分组）
+```
+/sync-knowledge "React 19" https://react.dev/blog/react-19
+```
+1. 抓取网页
+2. 创建 `knowledge/react-19/`
+3. 保存到 `knowledge/react-19/react-19-blog.md`
+4. 上传并验证
