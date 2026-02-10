@@ -18,18 +18,18 @@
 
 ## 📦 快速开始
 
-### 手动安装
+### 安装方式 1：使用 npm 包（推荐）
+
+MCP 服务器已发布到 npm，无需克隆项目。
+
+### 安装方式 2：从源码运行（开发者）
 
 ```bash
-# 1. 克隆项目
+# 克隆项目
 cd ~/projects
 git clone https://github.com/youtao/anythingllm-integration.git
-cd anythingllm-integration
-
-# 2. 安装依赖
+cd anythingllm-integration/mcp-server
 npm install
-
-# 3. 配置环境变量（添加到 ~/.zshrc）
 ```
 
 ## ⚙️ 配置
