@@ -1,6 +1,6 @@
 {
   "name": "@woyo/anythingllm-mcp-server",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "MCP Server for AnythingLLM integration - 支持 PDF、Word、图片等多种文件格式上传",
   "main": "index.js",
   "type": "module",

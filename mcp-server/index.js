@@ -332,8 +332,9 @@ async function searchDocuments(query, workspaceSlug = null) {
       }
     }
 
+    // 使用 vector-search 端点
     const response = await axios.post(
-      `${CONFIG.baseURL}/v1/workspace/${slug}/search`,
+      `${CONFIG.baseURL}/v1/workspace/${slug}/vector-search`,
       { query },
       {
         headers: getHeaders(),
@@ -341,10 +342,12 @@ async function searchDocuments(query, workspaceSlug = null) {
       }
     );
 
+    // vector-search 返回 { results: [{ id, text, metadata }, ...] }
     return {
       success: true,
       workspace: slug,
-      results: response.data.results || []
+      results: response.data.results || [],
+      count: (response.data.results || []).length
     };
   } catch (error) {
     const message = handleApiError(error, '搜索文档');
@@ -365,19 +368,55 @@ async function uploadDocumentWithUpdate(workspaceSlug, title, filePath, folder =
   return await uploadDocumentFile(workspaceSlug, filePath, title, folder, metadata);
 }
 
+// 递归解析 localFiles 结构，提取所有文档
+function parseLocalFiles(items, path = '') {
+  const documents = [];
+
+  for (const item of items) {
+    const itemPath = path ? `${path}/${item.name}` : item.name;
+
+    if (item.type === 'folder') {
+      // 递归处理文件夹
+      if (item.items) {
+        documents.push(...parseLocalFiles(item.items, itemPath));
+      }
+    } else if (item.type === 'file') {
+      // 添加文件到列表
+      documents.push({
+        name: item.name,
+        path: itemPath,
+        title: item.title || item.name,
+        ...item
+      });
+    }
+  }
+
+  return documents;
+}
+
 // 列出工作区中的所有文档
 async function listDocuments(workspaceSlug) {
   try {
     const response = await axios.get(
-      `${CONFIG.baseURL}/v1/workspace/${workspaceSlug}/documents`,
+      `${CONFIG.baseURL}/v1/documents`,
       {
         headers: getHeaders(),
-        timeout: 10000
+        timeout: 10000,
+        params: { workspace: workspaceSlug }
       }
     );
+
+    // 解析 localFiles 结构
+    let documents = [];
+    if (response.data.localFiles && response.data.localFiles.items) {
+      documents = parseLocalFiles(response.data.localFiles.items);
+    }
+
     return {
       success: true,
-      documents: response.data.documents || []
+      workspace: workspaceSlug,
+      documents: documents,
+      count: documents.length
     };
   } catch (error) {
     const message = handleApiError(error, '获取文档列表');
@@ -390,7 +429,7 @@ async function listDocuments(workspaceSlug) {
 const server = new Server(
   {
     name: 'anythingllm-mcp-server',
-    version: '1.6.0',
+    version: '1.6.1',
   },
   {
     capabilities: {
@@ -597,7 +636,7 @@ async function main() {
   // 3. 启动 MCP 服务器
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('AnythingLLM MCP 服务器已启动 v1.6.0');
+  console.error('AnythingLLM MCP 服务器已启动 v1.6.1');
   console.error('支持功能: 搜索、列出工作区、创建工作区、上传文档、列出文档');
 }
 

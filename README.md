@@ -1,7 +1,7 @@
 # AnythingLLM Integration - Claude Code Plugin
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.5.1-blue.svg)](https://github.com/youtao/anythingllm-integration)
+[![Version](https://img.shields.io/badge/version-1.6.1-blue.svg)](https://github.com/youtao/anythingllm-integration)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
 > 🚀 AnythingLLM 知识库集成 - 为 Claude Code 提供自动查询和智能同步功能
@@ -276,7 +276,7 @@ youtao
 
 ---
 
-**版本**：1.6.0
+**版本**：1.6.1
 **更新日期**：2026-02-10
 **状态**：✅ 生产就绪
 
@@ -284,7 +284,7 @@ youtao
 
 查看 [CHANGELOG.md](CHANGELOG.md) 了解完整版本历史和详细变更信息。
 
-### 最新版本亮点 (v1.6.0)
+### 最新版本亮点 (v1.6.1)
 - ✨ 使用官方 AnythingLLM API，性能提升 3 倍
 - ✨ 自动向量嵌入，无需手动触发
 - 🐛 修复多个配置和上传问题
