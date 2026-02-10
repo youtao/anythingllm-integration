@@ -29,17 +29,7 @@ cd anythingllm-integration
 # 2. 安装依赖
 npm install
 
-# 3. 配置环境变量
-cp .env.example .env
-nano .env  # 编辑配置文件
-```
-
-在 `.env` 中配置：
-
-```bash
-ANYTHINGLLM_BASE_URL=http://192.168.3.100:3000/api
-ANYTHINGLLM_API_KEY=your-api-key-here
-ANYTHINGLLM_WORKSPACE=your-workspace-slug  # 可选，指定默认工作区
+# 3. 配置环境变量（添加到 ~/.zshrc）
 ```
 
 ## ⚙️ 配置
@@ -184,7 +174,6 @@ anythingllm-integration/
 │   ├── index.js                # 主程序
 │   └── package.json
 ├── .mcp.json                    # MCP 配置
-├── .env.example                 # 环境变量模板
 ├── package.json                 # 项目配置
 ├── README.md                    # 本文件
 └── LICENSE                      # MIT 许可证
@@ -232,9 +221,9 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node mcp-server/index.js
 
 ### 同步失败
 
-1. 检查 `.env` 配置
-2. 确认 AnythingLLM API 可访问
-3. 验证 API Key 正确性
+1. 确认 AnythingLLM API 可访问
+2. 验证 API Key 正确性
+3. 检查环境变量是否正确配置 (`echo $ANYTHINGLLM_BASE_URL`)
 
 ### Hook 不执行
 
