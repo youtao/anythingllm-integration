@@ -136,5 +136,4 @@ cd ..
 | 文件 | 说明 |
 |------|------|
 | [mcp-server/index.js](mcp-server/index.js) | MCP 服务器实现 |
-| [commands/setup.md](commands/setup.md) | 安装配置命令 |
 | [commands/sync-knowledge.md](commands/sync-knowledge.md) | 同步命令 |

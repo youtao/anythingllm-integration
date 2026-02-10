@@ -190,7 +190,6 @@ anythingllm-integration/
 ├── scripts/
 │   └── force-knowledge-query.sh # 强制查询脚本
 ├── commands/                    # 斜杠命令
-│   ├── setup.md                 # 安装配置
 │   └── sync-knowledge.md       # 智能同步
 ├── mcp-server/                  # MCP 服务器
 │   ├── index.js                # 主程序
