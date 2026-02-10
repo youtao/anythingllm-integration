@@ -124,6 +124,11 @@ git tag v1.3.0
 
 # 5. 推送
 git push && git push --tags
+
+# 6. 发布 mcp-server 到 npm（进入 mcp-server 目录）
+cd mcp-server
+npm publish --registry https://registry.npmjs.org/ --access public
+cd ..
 ```
 
 ## 关键文件
