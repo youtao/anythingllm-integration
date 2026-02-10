@@ -37,8 +37,9 @@ nano .env  # 编辑配置文件
 在 `.env` 中配置：
 
 ```bash
-ANYTHINGLLM_BASE_URL=http://192.168.3.100:3001/api
+ANYTHINGLLM_BASE_URL=http://192.168.3.100:3000/api
 ANYTHINGLLM_API_KEY=your-api-key-here
+ANYTHINGLLM_WORKSPACE=your-workspace-slug  # 可选，指定默认工作区
 ```
 
 ## ⚙️ 配置
@@ -54,8 +55,9 @@ ANYTHINGLLM_API_KEY=your-api-key-here
       "command": "node",
       "args": ["~/projects/anythingllm-integration/mcp-server/index.js"],
       "env": {
-        "ANYTHINGLLM_BASE_URL": "http://192.168.3.100:3001/api",
-        "ANYTHINGLLM_API_KEY": "your-api-key"
+        "ANYTHINGLLM_BASE_URL": "http://192.168.3.100:3000/api",
+        "ANYTHINGLLM_API_KEY": "your-api-key",
+        "ANYTHINGLLM_WORKSPACE": "your-workspace-slug"
       }
     }
   }
@@ -66,12 +68,14 @@ ANYTHINGLLM_API_KEY=your-api-key-here
 
 ```bash
 # 临时设置（当前会话）
-export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3001/api"
+export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3000/api"
 export ANYTHINGLLM_API_KEY="your-api-key"
+export ANYTHINGLLM_WORKSPACE="your-workspace-slug"  # 可选，默认使用第一个工作区
 
 # 或添加到 ~/.bashrc 或 ~/.zshrc（永久）
-echo 'export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3001/api"' >> ~/.bashrc
+echo 'export ANYTHINGLLM_BASE_URL="http://192.168.3.100:3000/api"' >> ~/.bashrc
 echo 'export ANYTHINGLLM_API_KEY="your-api-key"' >> ~/.bashrc
+echo 'export ANYTHINGLLM_WORKSPACE="your-workspace-slug"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
