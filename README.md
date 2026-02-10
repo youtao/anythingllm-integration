@@ -18,21 +18,7 @@
 
 ## 📦 快速开始
 
-### 方法 1：使用 /setup 命令（推荐）
-
-在 Claude Code 中运行：
-
-```
-/setup
-```
-
-AI 将自动引导您完成：
-- ✅ 安装 npm 依赖
-- ✅ 配置环境变量
-- ✅ 验证 MCP 服务器
-- ✅ 测试插件功能
-
-### 方法 2：手动安装
+### 手动安装
 
 ```bash
 # 1. 克隆项目
@@ -118,7 +104,6 @@ Claude 会自动：
 ### 斜杠命令
 
 ```
-/setup                     # 安装和配置插件
 /sync-knowledge "PostgreSQL 18"              # 网络搜索同步
 /sync-knowledge "Vue 文档" ~/docs/guide.md     # 上传本地文件
 /sync-knowledge "React 19" https://react.dev    # 抓取网页内容
@@ -139,7 +124,7 @@ Claude 会自动：
 | `anythingllm_search` | 向量搜索知识库 | query (必需), workspace (可选) |
 | `anythingllm_list_workspaces` | 列出所有工作区 | - |
 | `anythingllm_create_workspace` | 创建新工作区 | name (必需) |
-| `anythingllm_upload_document` | 上传文档（自动嵌入+更新） | workspace, title, content (必需), folder (可选) |
+| `anythingllm_upload_document` | 上传文档（支持文件夹） | workspace, filePath (必需), title, folder, metadata (可选) |
 | `anythingllm_list_documents` | 列出工作区文档 | workspace (必需) |
 
 **API 说明**：

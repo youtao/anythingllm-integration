@@ -52,7 +52,6 @@ API, REST, GraphQL, Docker, Kubernetes, Git, Linux
 
 ## 斜杠命令
 
-- `/setup` - 安装配置插件
 - `/sync-knowledge [主题] [文件/URL]` - 智能同步知识
 
 ## 知识库同步规则
