@@ -1,7 +1,7 @@
 # AnythingLLM Integration - Claude Code Plugin
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.6.2-blue.svg)](https://github.com/youtao/anythingllm-integration)
+[![Version](https://img.shields.io/badge/version-1.6.3-blue.svg)](https://github.com/youtao/anythingllm-integration)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
 > 🚀 AnythingLLM 知识库集成 - 为 Claude Code 提供自动查询和智能同步功能
@@ -276,7 +276,7 @@ youtao
 
 ---
 
-**版本**：1.6.2
+**版本**：1.6.3
 **更新日期**：2026-02-10
 **状态**：✅ 生产就绪
 
@@ -284,7 +284,7 @@ youtao
 
 查看 [CHANGELOG.md](CHANGELOG.md) 了解完整版本历史和详细变更信息。
 
-### 最新版本亮点 (v1.6.2)
+### 最新版本亮点 (v1.6.3)
+- 🐛 修复上传文件后扩展名丢失的问题
 - 🐛 修复 anythingllm_list_documents 和 anythingllm_search API 端点
 - 🔄 优化 sync-knowledge 命令，移除冗余的 list_documents 校验
-- ✅ 强制使用 folder 参数组织文档

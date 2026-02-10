@@ -431,7 +431,7 @@ async function listDocuments(workspaceSlug) {
 const server = new Server(
   {
     name: 'anythingllm-mcp-server',
-    version: '1.6.2',
+    version: '1.6.3',
   },
   {
     capabilities: {
@@ -638,7 +638,7 @@ async function main() {
   // 3. 启动 MCP 服务器
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('AnythingLLM MCP 服务器已启动 v1.6.2');
+  console.error('AnythingLLM MCP 服务器已启动 v1.6.3');
   console.error('支持功能: 搜索、列出工作区、创建工作区、上传文档、列出文档');
 }
 

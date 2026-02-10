@@ -1,6 +1,6 @@
 {
   "name": "anythingllm-integration",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "AnythingLLM 知识库集成 - 自动查询和同步系统",
   "author": {
     "name": "youtao",
