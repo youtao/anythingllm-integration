@@ -14,7 +14,7 @@
 - 🔄 **自动去重** - 基于标题智能更新，避免重复文件
 - 🔌 **MCP 集成** - 完整的 MCP 服务器，提供 6 个工具接口
 - 💬 **斜杠命令** - 简单易用的命令行接口
-- 🔒 **强制查询** - 使用 Hooks 确保技术问题必须查询知识库
+- 💡 **智能建议** - 使用 Hooks 智能建议查询知识库（非强制）
 
 ## 📦 快速开始
 
@@ -69,14 +69,14 @@ echo 'export ANYTHINGLLM_WORKSPACE="your-workspace-slug"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-### 3. 强制查询配置（自动）
+### 3. 智能查询建议（自动）
 
-插件使用 Hooks 自动强制查询知识库，无需额外配置！
+插件使用 Hooks 智能建议查询知识库，无需额外配置！
 
 **工作原理**：
 - 检测技术问题关键词（PostgreSQL、Vue、.NET 等）
-- 自动注入查询指令
-- Claude 必须先查询知识库才能回答
+- 显示知识库查询建议
+- Claude 可以自主决定是否查询
 
 详见下面的"强制查询"部分。
 
@@ -90,10 +90,10 @@ source ~/.bashrc
 PostgreSQL 18 性能优化有哪些具体改进？
 ```
 
-Claude 会自动：
-1. 检测到技术关键词
-2. 查询 AnythingLLM 知识库
-3. 基于检索结果回答
+Claude 会智能建议：
+1. 检测到技术关键词时显示建议
+2. 提供具体的搜索命令
+3. AI 自主决定是否查询知识库
 
 ### 斜杠命令
 
@@ -126,9 +126,9 @@ Claude 会自动：
 - 自动处理向量嵌入，无需手动调用 update-embeddings
 - 一步到位完成文档上传和工作区添加
 
-### 2️⃣ 强制查询知识库（Hooks）
+### 2️⃣ 智能查询建议（Hooks）
 
-**自动强制**，无需手动配置！
+**自动建议**，无需手动配置！
 
 **触发关键词**：PostgreSQL, MySQL, 数据库, ABP, Vue, React, Angular, .NET, C#, TypeScript, JavaScript, Python, Java, Go, Rust, Node, API, REST, Docker, Kubernetes, Git, Linux 等
 
@@ -138,11 +138,11 @@ Claude 会自动：
   ↓
 Hook 检测技术关键词
   ↓
-注入强制查询指令
+显示知识库查询建议
   ↓
-Claude 必须先查询 @anythingllm_search
+AI 自主决定是否查询
   ↓
-基于检索结果回答
+基于判断选择最佳回答方式
 ```
 
 **Hook 配置**（自动加载）：
@@ -167,7 +167,7 @@ anythingllm-integration/
 ├── hooks/
 │   └── hooks.json               # Hook 配置
 ├── scripts/
-│   └── force-knowledge-query.sh # 强制查询脚本
+│   └── force-knowledge-query.sh # 智能查询建议脚本
 ├── commands/                    # 斜杠命令
 │   └── sync-knowledge.md       # 智能同步
 ├── mcp-server/                  # MCP 服务器

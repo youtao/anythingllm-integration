@@ -1,5 +1,5 @@
 {
-  "description": "AnythingLLM 集成 - 强制知识库查询 Hooks",
+  "description": "AnythingLLM 集成 - 智能知识库查询建议 Hooks",
   "hooks": {
     "PreToolUse": [
       {
@@ -9,7 +9,7 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/scripts/force-knowledge-query.sh",
             "timeout": 5,
-            "statusMessage": "检查是否需要查询知识库..."
+            "statusMessage": "智能知识库查询建议..."
           }
         ]
       }
