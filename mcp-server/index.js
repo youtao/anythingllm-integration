@@ -230,21 +230,23 @@ async function uploadDocumentFile(workspaceSlug, filePath, title, folder = null,
     }
 
     const absolutePath = validation.absolutePath;
+    const originalFileName = path.basename(absolutePath);
     const mimeType = getMimeType(absolutePath);
 
     // 步骤 2: 使用 form-data 构建请求
     const FormData = (await import('form-data')).default;
     const form = new FormData();
 
-    // 添加文件
+    // 添加文件 - 始终使用原始文件名（包含扩展名）
     form.append('file', await fs.readFile(absolutePath), {
-      filename: path.basename(absolutePath),
+      filename: originalFileName,
       contentType: mimeType
     });
 
-    // 添加元数据
+    // 添加元数据 - title 仅作为显示标题，不影响文件名
     const fileMetadata = {
-      title: title || path.basename(absolutePath),
+      title: title || originalFileName,
+      fileName: originalFileName,  // 明确指定文件名（保留扩展名）
       ...metadata
     };
     form.append('metadata', JSON.stringify(fileMetadata));
