@@ -249,14 +249,14 @@ async function uploadDocumentFile(workspaceSlug, filePath, title, folder = null,
     };
     form.append('metadata', JSON.stringify(fileMetadata));
 
-    // 添加文件夹参数（单独字段）
-    if (folder) {
-      form.append('folder', folder);
-    }
-
     // 步骤 3: 上传文件
+    // AnythingLLM 支持通过 URL 路径指定文件夹: /v1/document/upload/{folderName}
+    const uploadEndpoint = folder
+      ? `${CONFIG.baseURL}/v1/document/upload/${encodeURIComponent(folder)}`
+      : `${CONFIG.baseURL}/v1/document/upload`;
+
     const response = await axios.post(
-      `${CONFIG.baseURL}/v1/document/upload`,
+      uploadEndpoint,
       form,
       {
         headers: {
